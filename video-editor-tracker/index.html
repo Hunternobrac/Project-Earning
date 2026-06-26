@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Editor Performance & Income Tracker</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="dark">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">V</div>
+      <span class="sidebar-title">Editor Workspace</span>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <a class="nav-item active" id="nav-dashboard" onclick="switchView('dashboard')">
+        <!-- Dashboard Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+        </svg>
+        <span>Dashboard</span>
+      </a>
+      
+      <a class="nav-item" id="nav-sheet" onclick="switchView('sheet')">
+        <!-- Spreadsheet Table Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
+        </svg>
+        <span>Spreadsheet View</span>
+      </a>
+      
+      <a class="nav-item" id="nav-analytics" onclick="switchView('analytics')">
+        <!-- Analytics Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z" />
+        </svg>
+        <span>Performance Stats</span>
+      </a>
+      
+      <a class="nav-item" id="nav-clients" onclick="switchView('clients')">
+        <!-- Clients Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+        </svg>
+        <span>Clients</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <span style="font-size: 0.8rem; color: var(--text-muted);">v1.0.0</span>
+      <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle Theme">
+        <!-- Moon Icon -->
+        <svg id="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+        </svg>
+        <!-- Sun Icon (Hidden initially) -->
+        <svg id="theme-icon-sun" style="display:none;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m0 13.5V21m9.75-9h-2.25M5.25 12H3m14.022-6.772-1.591 1.591M7.82 16.18l-1.591 1.591m12-1.591 1.591 1.591M7.82 7.82 6.229 6.229M12 15.75a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5Z" />
+        </svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN VIEW WRAPPER -->
+  <div class="main-wrapper">
+    <header>
+      <div class="header-search">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m21-21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+        </svg>
+        <input type="text" id="global-search" placeholder="Search projects or clients..." oninput="handleSearch(this.value)">
+      </div>
+      
+      <div class="header-actions">
+        <!-- Combined Invoice Button (Shows only when > 1 client-matching projects are selected) -->
+        <button class="btn btn-secondary" id="bulk-invoice-btn" style="display:none;" onclick="openCombinedInvoiceModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:16px;height:16px;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+          </svg>
+          Generate Combined Invoice (<span id="bulk-invoice-count">0</span>)
+        </button>
+
+        <button class="btn btn-secondary" onclick="exportToCSV()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:16px;height:16px;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+          </svg>
+          Export to Excel (CSV)
+        </button>
+        
+        <button class="btn btn-primary" onclick="openAddProjectModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:16px;height:16px;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+          New Project
+        </button>
+      </div>
+    </header>
+
+    <main class="content-body">
+      
+      <!-- VIEW 1: DASHBOARD -->
+      <section class="page-view active" id="view-dashboard">
+        <!-- Quick Stats Banner -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Income of Month</span>
+              <div class="stat-icon green">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width:18px;height:18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+              </div>
+            </div>
+            <div class="stat-value" id="stat-monthly-income">₹0.00</div>
+            <div class="stat-desc">Paid income cleared in current month</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Unpaid Balance</span>
+              <div class="stat-icon orange">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width:18px;height:18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0-10.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.249-8.25-3.286Zm0 13.036h.008v.008H12v-.008Z"/></svg>
+              </div>
+            </div>
+            <div class="stat-value" id="stat-unpaid-income">₹0.00</div>
+            <div class="stat-desc">Remaining client invoices pending</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Editing Efficiency</span>
+              <div class="stat-icon purple">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width:18px;height:18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+              </div>
+            </div>
+            <div class="stat-value" id="stat-efficiency">0.0h</div>
+            <div class="stat-desc">Avg. edit hours spent per 1 min video</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Avg Turnaround</span>
+              <div class="stat-icon teal">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width:18px;height:18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.64 8.38m6 .01a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
+              </div>
+            </div>
+            <div class="stat-value" id="stat-turnaround">0.0 days</div>
+            <div class="stat-desc">Avg. footage to final delivery time</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Pending Backlog</span>
+              <div class="stat-icon orange" style="background-color: rgba(239, 68, 68, 0.15); color: var(--danger);">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width:18px;height:18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M6 13.5V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 0 1 0 3m0-3a1.5 1.5 0 0 0 0 3m0 9.75V10.5"/></svg>
+              </div>
+            </div>
+            <div class="stat-value" id="stat-backlog-count">0</div>
+            <div class="stat-desc">Active edits remaining in backlog</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Backlog Value</span>
+              <div class="stat-icon purple" style="background-color: rgba(139, 92, 246, 0.15); color: var(--info);">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width:18px;height:18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5h.007v.008H3.75V4.5Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3 19.5h10.5m-10.5-3h9.75M3 13.5h7.5M19.5 4.5h.008v.008h-.008V4.5Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM18 19.5h1.5a.75.75 0 0 0 .75-.75V3.75a.75.75 0 0 0-.75-.75h-6a.75.75 0 0 0-.75.75V4.5" /></svg>
+              </div>
+            </div>
+            <div class="stat-value" id="stat-backlog-value">₹0.00</div>
+            <div class="stat-desc">Total remaining cost of active edits</div>
+          </div>
+        </div>
+
+        <!-- Dashboard Layout with Charts & Active List -->
+        <div class="dashboard-details">
+          <div class="chart-card">
+            <div class="card-title">
+              <span>Monthly Revenue Breakdown</span>
+              <span style="font-size:0.8rem;color:var(--text-muted);font-weight:normal;">Paid vs Total Value</span>
+            </div>
+            <div class="chart-container">
+              <canvas id="revenueChart"></canvas>
+            </div>
+          </div>
+
+          <div class="recent-activity-card">
+            <div class="card-title">Recent Milestones</div>
+            <div class="activity-list" id="activity-log">
+              <!-- Filled in dynamically -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 2: SPREADSHEET TABLE -->
+      <section class="page-view" id="view-sheet">
+        <!-- Controls & Filters -->
+        <div class="sheet-controls">
+          <div class="filter-group">
+            <div class="form-group" style="flex-direction:row;align-items:center;gap:8px;">
+              <label for="filter-client" style="white-space:nowrap;margin:0;">Client:</label>
+              <select id="filter-client" class="filter-select" onchange="applyFilters()">
+                <option value="all">All Clients</option>
+              </select>
+            </div>
+            
+            <div class="form-group" style="flex-direction:row;align-items:center;gap:8px;">
+              <label for="filter-status" style="white-space:nowrap;margin:0;">Status:</label>
+              <select id="filter-status" class="filter-select" onchange="applyFilters()">
+                <option value="all">All Statuses</option>
+                <option value="Footage Received">Footage Received</option>
+                <option value="Rough Cut">Rough Cut</option>
+                <option value="Color & Sound">Color & Sound</option>
+                <option value="Review">Review</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+            
+            <div class="form-group" style="flex-direction:row;align-items:center;gap:8px;">
+              <label for="filter-month" style="white-space:nowrap;margin:0;">Month:</label>
+              <select id="filter-month" class="filter-select" onchange="applyFilters()">
+                <option value="all">All Months</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="font-size: 0.85rem; color: var(--text-muted);">
+            Showing <span id="filtered-count">0</span> of <span id="total-count">0</span> projects
+          </div>
+        </div>
+
+        <!-- Excel Spreadsheet Container -->
+        <div class="spreadsheet-container">
+          <div class="spreadsheet-scroll">
+            <table class="sheet-table" id="project-table">
+              <thead>
+                <tr>
+                  <th style="width: 40px; text-align: center;">
+                    <input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAll(this)">
+                  </th>
+                  <th>Video Title</th>
+                  <th>Client</th>
+                  <th>Budget</th>
+                  <th>Amount Paid</th>
+                  <th>Balance Due</th>
+                  <th>Status</th>
+                  <th>Payment Status</th>
+                  <th>Raw Size (Min)</th>
+                  <th>Final Size (Min)</th>
+                  <th>Edit Hours</th>
+                  <th>Due Date</th>
+                  <th>Completed Date</th>
+                  <th style="width: 120px; text-align: center;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="project-table-body">
+                <!-- Rows injected dynamically by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 3: DETAILED PERFORMANCE STATS -->
+      <section class="page-view" id="view-analytics">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px;">
+          <div class="chart-card">
+            <div class="card-title">Project Stage Allocation</div>
+            <div class="chart-container" style="height:320px;">
+              <canvas id="statusBreakdownChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="card-title">Financial Health Breakdown</div>
+            <div class="chart-container" style="height:320px;">
+              <canvas id="financialPieChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional Performance Insights -->
+        <div class="stats-grid" style="margin-top:12px;">
+          <div class="stat-card">
+            <div class="stat-header">Average Project Budget</div>
+            <div class="stat-value" id="analytic-avg-budget">₹0.00</div>
+            <div class="stat-desc">Avg. cost charged per video edit</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">Earnings Per Final Min</div>
+            <div class="stat-value" id="analytic-earn-per-min">₹0.00</div>
+            <div class="stat-desc">Equivalent billing rate per edited minute</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header"> Footage-to-Edited Ratio</div>
+            <div class="stat-value" id="analytic-footage-ratio">0.0:1</div>
+            <div class="stat-desc">Raw footage vs. final cut length</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">Equivalent Hourly Wage</div>
+            <div class="stat-value" id="analytic-hourly-wage">₹0.00/hr</div>
+            <div class="stat-desc">Based on actual hours logged per project</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 4: CLIENTS VIEW -->
+      <section class="page-view" id="view-clients">
+        <div class="sheet-controls">
+          <div style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: var(--text-main);">
+            Client Profiles & Dues
+          </div>
+          <div style="font-size: 0.85rem; color: var(--text-muted);">
+            Active Clients: <span id="client-total-count">0</span>
+          </div>
+        </div>
+
+        <div id="clients-grid">
+          <!-- Client cards injected dynamically -->
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ADD / EDIT PROJECT MODAL -->
+  <div class="modal-backdrop" id="project-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title">New Project</h3>
+        <button class="modal-close" onclick="closeProjectModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      
+      <form id="project-form" onsubmit="saveProject(event)">
+        <input type="hidden" id="project-id">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label for="p-title">Video Title / Project Name *</label>
+              <input type="text" id="p-title" required placeholder="e.g. Travel Vlog - Switzerland Ep 1">
+            </div>
+            
+            <div class="form-group">
+              <label for="p-client">Client / Channel Name *</label>
+              <input type="text" id="p-client" required placeholder="e.g. Channel X">
+            </div>
+            
+            <div class="form-group">
+              <label for="p-status">Editing Stage *</label>
+              <select id="p-status" required>
+                <option value="Footage Received">Footage Received</option>
+                <option value="Rough Cut">Rough Cut</option>
+                <option value="Color & Sound">Color & Sound</option>
+                <option value="Review">Review</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="p-budget">Budget (₹) *</label>
+              <input type="number" id="p-budget" min="0" required placeholder="10000" oninput="autoCalculatePaymentStatus()">
+            </div>
+            
+            <div class="form-group">
+              <label for="p-paid">Amount Paid (₹) *</label>
+              <input type="number" id="p-paid" min="0" required placeholder="0" oninput="autoCalculatePaymentStatus()">
+            </div>
+            
+            <div class="form-group">
+              <label for="p-pay-status">Payment Status *</label>
+              <select id="p-pay-status" required>
+                <option value="Unpaid">Unpaid</option>
+                <option value="Partial">Partial</option>
+                <option value="Paid">Paid</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="p-raw-length">Raw Footage Size (Minutes)</label>
+              <input type="number" step="0.1" id="p-raw-length" min="0" placeholder="e.g. 60">
+            </div>
+
+            <div class="form-group">
+              <label for="p-final-length">Final Video Size (Minutes)</label>
+              <input type="number" step="0.1" id="p-final-length" min="0" placeholder="e.g. 10">
+            </div>
+
+            <div class="form-group">
+              <label for="p-hours">Editing Hours Logged</label>
+              <input type="number" step="0.1" id="p-hours" min="0" placeholder="e.g. 12.5">
+            </div>
+            
+            <div class="form-group">
+              <label for="p-due-date">Due Date</label>
+              <input type="date" id="p-due-date">
+            </div>
+            
+            <div class="form-group">
+              <label for="p-comp-date">Completed Date</label>
+              <input type="date" id="p-comp-date">
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeProjectModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Project</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- COMBINED INVOICE PREVIEW MODAL -->
+  <div class="modal-backdrop" id="invoice-modal">
+    <div class="modal-content invoice-modal-content">
+      <div class="modal-header">
+        <h3>Invoice Generator</h3>
+        <button class="modal-close" onclick="closeInvoiceModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body" style="background-color: var(--bg-sidebar);">
+        <!-- Invoice Settings / Editor Form -->
+        <div class="invoice-editor-sidebar">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="inv-editor-name">Your Business / Editor Name</label>
+              <input type="text" id="inv-editor-name" value="Jane Doe Studios" oninput="updateInvoicePreview()">
+            </div>
+            
+            <div class="form-group">
+              <label for="inv-editor-email">Your Contact Email</label>
+              <input type="email" id="inv-editor-email" value="hello@janedoestudios.com" oninput="updateInvoicePreview()">
+            </div>
+
+            <div class="form-group">
+              <label for="inv-payment-details">Bank Account Details / UPI</label>
+              <input type="text" id="inv-payment-details" value="HDFC Bank - A/C: 50100123456789 (IFSC: HDFC0001234) or UPI: editor@upi" oninput="updateInvoicePreview()">
+            </div>
+
+            <div class="form-group">
+              <label for="inv-due-terms">Invoice Due Date Terms</label>
+              <input type="text" id="inv-due-terms" value="Due on Receipt" oninput="updateInvoicePreview()">
+            </div>
+          </div>
+        </div>
+
+        <!-- Renderable Print Layout -->
+        <div class="invoice-preview-area" id="invoice-print-area">
+          <div class="invoice-header">
+            <div class="invoice-logo-title">
+              <h2 id="prev-editor-name">Jane Doe Studios</h2>
+              <p id="prev-editor-email">hello@janedoestudios.com</p>
+            </div>
+            <div class="invoice-meta">
+              <h1>Invoice</h1>
+              <p>Invoice #: <strong id="prev-invoice-num">INV-1024</strong></p>
+              <p>Date: <span id="prev-invoice-date">June 26, 2026</span></p>
+            </div>
+          </div>
+
+          <div class="invoice-details-row">
+            <div class="invoice-col">
+              <h4>Billed To:</h4>
+              <p><strong id="prev-client-name">Client Name</strong></p>
+            </div>
+            <div class="invoice-col" style="text-align: right;">
+              <h4>Payment Terms:</h4>
+              <p id="prev-due-terms">Due on Receipt</p>
+            </div>
+          </div>
+
+          <table class="invoice-items-table">
+            <thead>
+              <tr>
+                <th>Project Description</th>
+                <th class="text-right" style="width: 150px;">Total Budget</th>
+                <th class="text-right" style="width: 150px;">Amount Paid</th>
+                <th class="text-right" style="width: 150px;">Balance Due</th>
+              </tr>
+            </thead>
+            <tbody id="invoice-items-body">
+              <!-- Rendered items go here -->
+            </tbody>
+          </table>
+
+          <div class="invoice-totals">
+            <div class="invoice-total-row">
+              <span>Subtotal:</span>
+              <span id="prev-subtotal">₹0.00</span>
+            </div>
+            <div class="invoice-total-row">
+              <span>Total Paid:</span>
+              <span id="prev-total-paid">₹0.00</span>
+            </div>
+            <div class="invoice-total-row grand-total">
+              <span>Total Due:</span>
+              <span id="prev-grand-total">₹0.00</span>
+            </div>
+          </div>
+
+          <div class="invoice-payment-info">
+            <h4>Payment Instructions</h4>
+            <p id="prev-payment-details">HDFC Bank - A/C: 50100123456789 (IFSC: HDFC0001234)</p>
+            <p style="margin-top: 8px; font-size: 0.78rem; font-style: italic;">Thank you for your business!</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeInvoiceModal()">Close</button>
+        <button type="button" class="btn btn-primary" onclick="printInvoice()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:16px;height:16px;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.615 0-1.11-.474-1.12-1.078L6 18m12 0H6m12 0a1.875 1.875 0 0 0 1.875-1.875V9.75A1.875 1.875 0 0 0 16.5 7.875h-9A1.875 1.875 0 0 0 5.625 9.75v6.375c0 1.036.84 1.875 1.875 1.875m11.25-18v2.25m-11.25-2.25v2.25m-1.5 0h14.25" />
+          </svg>
+          Print / Save PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIENT SLIDE PANEL (SLIDE-OVER CONTAINER) -->
+  <div class="slide-panel-backdrop" id="client-panel-backdrop" onclick="closeClientSlidePanel()"></div>
+  <div class="slide-panel" id="client-slide-panel">
+    <div class="slide-panel-header">
+      <h3 id="slide-client-name">Client Name</h3>
+      <button class="modal-close" onclick="closeClientSlidePanel()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width:20px;height:20px;">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="slide-panel-body">
+      <!-- Client summary stats -->
+      <div class="client-summary-grid">
+        <div class="client-summary-card">
+          <span class="title">Total Revenue</span>
+          <span class="val text-success" id="slide-client-revenue">₹0.00</span>
+        </div>
+        <div class="client-summary-card">
+          <span class="title">Total Unpaid Dues</span>
+          <span class="val text-danger" id="slide-client-dues">₹0.00</span>
+        </div>
+      </div>
+
+      <!-- Client projects list -->
+      <h4 style="font-family: var(--font-heading); margin: 24px 0 12px; font-weight: 700;">Projects History</h4>
+      <div class="slide-projects-list" id="slide-client-projects">
+        <!-- Injected project summary items -->
+      </div>
+    </div>
+    <div class="slide-panel-footer">
+      <button class="btn btn-primary" style="width: 100%;" id="slide-client-invoice-btn" onclick="generateClientCombinedInvoice()">
+        Generate Invoice for Outstanding Dues
+      </button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
